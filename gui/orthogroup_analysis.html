@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orthogroup Presence/Absence</title>
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --surface: #ffffff;
+      --surface-2: #edf3f7;
+      --text: #16212b;
+      --muted: #617080;
+      --line: #cbd7e2;
+      --accent: #1d7068;
+      --accent-2: #245c7d;
+      --danger: #a23b3b;
+      --warn: #875a0a;
+      --ok: #1f6c43;
+      --shadow: 0 8px 22px rgba(20, 34, 48, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 22px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--surface-2);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(330px, 460px) minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px 22px 22px;
+    }
+
+    section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .panel-body, form {
+      padding: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #ffffff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 3px;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 13px;
+      color: var(--text);
+      background: var(--surface-2);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    button.secondary {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+      color: #ffffff;
+    }
+
+    .message {
+      min-height: 38px;
+      margin-top: 13px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .message.ok {
+      color: var(--ok);
+      border-color: #a8d4b9;
+      background: #edf8f1;
+    }
+
+    .message.warn {
+      color: var(--warn);
+      border-color: #dec787;
+      background: #fff8e5;
+    }
+
+    .message.error {
+      color: var(--danger);
+      border-color: #e1b2b2;
+      background: #fff0f0;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+      padding: 10px;
+      min-height: 72px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .species-list {
+      max-height: 220px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdff;
+      padding: 8px;
+    }
+
+    .species-list h2 {
+      margin: 0 0 8px;
+      font-size: 13px;
+    }
+
+    .species-list div {
+      padding: 5px 4px;
+      border-top: 1px solid #e6edf3;
+      word-break: break-word;
+    }
+
+    .species-list div:first-of-type {
+      border-top: 0;
+    }
+
+    .table-wrap {
+      max-height: 430px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: #ffffff;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f8fbfd;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .empty {
+      padding: 18px;
+      color: var(--muted);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 1000px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .row,
+      .species-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions button {
+        flex: 1 1 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Orthogroup Presence/Absence</h1>
+    <nav class="tabs" aria-label="Workflow tabs">
+      <a class="tab active" href="/">Presence/Absence</a>
+      <a class="tab" href="/mapping">Known Proteins</a>
+      <a class="tab" href="/orthofinder">OrthoFinder</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <div class="panel-header">Filter Setup</div>
+      <form id="filterForm">
+        <div class="field">
+          <label for="orthogroupsPath">Orthogroups.tsv</label>
+          <input id="orthogroupsPath" value="__DEFAULT_OG_TSV__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="metadataPath">Species Metadata</label>
+          <input id="metadataPath" value="__DEFAULT_METADATA__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="outputDir">Output Folder</label>
+          <input id="outputDir" value="__DEFAULT_ANALYSIS_OUTPUT__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="direction">Direction</label>
+          <select id="direction">
+            <option value="calcifying">Calcifying-specific</option>
+            <option value="non_calcifying">Non-calcifying-specific</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="minTarget">Target Min Present</label>
+            <input id="minTarget" type="number" min="0" value="4">
+          </div>
+          <div class="field">
+            <label for="maxBackground">Background Max Present</label>
+            <input id="maxBackground" type="number" min="0" value="2">
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" data-min-target="7" data-max-background="0">7/7, 0 background</button>
+          <button type="button" data-min-target="6" data-max-background="0">6/7, 0 background</button>
+          <button type="button" data-min-target="4" data-max-background="2">Notebook 4/7, <=2</button>
+        </div>
+        <div class="actions">
+          <button type="button" id="loadBtn">Load</button>
+          <button type="submit" class="primary">Apply Filter</button>
+          <button type="button" id="exportBtn" class="secondary">Export</button>
+        </div>
+        <div id="message" class="message">Ready.</div>
+      </form>
+    </section>
+
+    <section>
+      <div class="panel-header">Dataset</div>
+      <div class="panel-body">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Orthogroups</div>
+            <div class="metric-value" id="metricOgs">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Species</div>
+            <div class="metric-value" id="metricSpecies">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Calcifying</div>
+            <div class="metric-value" id="metricCalc">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Non-Calcifying</div>
+            <div class="metric-value" id="metricNoncalc">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Candidates</div>
+            <div class="metric-value" id="metricCandidates">0</div>
+          </div>
+        </div>
+        <div class="species-grid">
+          <div class="species-list">
+            <h2>Calcifying</h2>
+            <div id="calcifyingSpecies">None loaded.</div>
+          </div>
+          <div class="species-list">
+            <h2>Non-Calcifying</h2>
+            <div id="nonCalcifyingSpecies">None loaded.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="full">
+      <div class="panel-header">Candidate Orthogroups</div>
+      <div class="panel-body">
+        <div class="table-wrap" id="resultWrap">
+          <div class="empty">No filter run yet.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const message = document.getElementById("message");
+    const filterForm = document.getElementById("filterForm");
+    const resultWrap = document.getElementById("resultWrap");
+    const metricOgs = document.getElementById("metricOgs");
+    const metricSpecies = document.getElementById("metricSpecies");
+    const metricCalc = document.getElementById("metricCalc");
+    const metricNoncalc = document.getElementById("metricNoncalc");
+    const metricCandidates = document.getElementById("metricCandidates");
+    const calcifyingSpecies = document.getElementById("calcifyingSpecies");
+    const nonCalcifyingSpecies = document.getElementById("nonCalcifyingSpecies");
+    let lastPayload = null;
+
+    function payload() {
+      return {
+        orthogroups_path: document.getElementById("orthogroupsPath").value.trim(),
+        metadata_path: document.getElementById("metadataPath").value.trim(),
+        output_dir: document.getElementById("outputDir").value.trim(),
+        direction: document.getElementById("direction").value,
+        min_target_present: Number(document.getElementById("minTarget").value || 0),
+        max_background_present: Number(document.getElementById("maxBackground").value || 0)
+      };
+    }
+
+    function setMessage(text, kind = "") {
+      message.className = "message" + (kind ? " " + kind : "");
+      message.textContent = text;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    async function postJson(url, body) {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || `Request failed with ${response.status}`);
+      }
+      return data;
+    }
+
+    function renderSpecies(container, rows) {
+      if (!rows || !rows.length) {
+        container.textContent = "None loaded.";
+        return;
+      }
+      container.innerHTML = rows.map(name => `<div>${escapeHtml(name)}</div>`).join("");
+    }
+
+    function renderSummary(summary) {
+      metricOgs.textContent = summary.orthogroup_count ?? 0;
+      metricSpecies.textContent = summary.species_count ?? 0;
+      metricCalc.textContent = summary.calcifying_count ?? summary.target_total ?? 0;
+      metricNoncalc.textContent = summary.non_calcifying_count ?? summary.background_total ?? 0;
+      metricCandidates.textContent = summary.candidate_count ?? 0;
+      renderSpecies(calcifyingSpecies, summary.calcifying_species || []);
+      renderSpecies(nonCalcifyingSpecies, summary.non_calcifying_species || []);
+    }
+
+    function renderResults(rows) {
+      if (!rows || !rows.length) {
+        resultWrap.innerHTML = '<div class="empty">No orthogroups matched this threshold.</div>';
+        return;
+      }
+      resultWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 11%">Orthogroup</th>
+              <th style="width: 12%">Target</th>
+              <th style="width: 13%">Background</th>
+              <th style="width: 10%">Specificity</th>
+              <th style="width: 9%">Tier</th>
+              <th style="width: 10%">Members</th>
+              <th>Target Species Present</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td>${escapeHtml(row.Orthogroup)}</td>
+                <td>${row.target_present}/${row.target_total}</td>
+                <td>${row.background_present}/${row.background_total}</td>
+                <td>${row.specificity}</td>
+                <td>${escapeHtml(row.tier)}</td>
+                <td>${row.member_count}</td>
+                <td>${escapeHtml(row.target_species_present || "")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", async () => {
+      try {
+        const data = await postJson("/api/og/summary", payload());
+        renderSummary(data);
+        setMessage("Dataset loaded.", data.warnings && data.warnings.length ? "warn" : "ok");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    document.querySelectorAll("[data-min-target]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.getElementById("minTarget").value = button.dataset.minTarget;
+        document.getElementById("maxBackground").value = button.dataset.maxBackground;
+      });
+    });
+
+    filterForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        const data = await postJson("/api/og/filter", payload());
+        lastPayload = payload();
+        renderSummary(data.summary);
+        renderResults(data.rows);
+        setMessage(`Filter matched ${data.summary.candidate_count} orthogroups.`, "ok");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", async () => {
+      try {
+        const data = await postJson("/api/og/export", lastPayload || payload());
+        renderSummary(data.summary);
+        renderResults(data.rows);
+        setMessage(`Exported ${data.summary.candidate_count} orthogroups to ${data.paths.candidate_table}`, "ok");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

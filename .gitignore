@@ -1,0 +1,14 @@
+results/
+.snakemake/
+__pycache__/
+*.pyc
+
+
+.venv/
+.ofenv/
+
+*.zip
+*.dmnd
+
+.DS_Store
+Thumbs.db

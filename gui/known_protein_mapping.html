@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Known Protein Mapping</title>
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --surface: #ffffff;
+      --surface-2: #edf3f7;
+      --text: #16212b;
+      --muted: #617080;
+      --line: #cbd7e2;
+      --accent: #1d7068;
+      --accent-2: #245c7d;
+      --danger: #a23b3b;
+      --warn: #875a0a;
+      --ok: #1f6c43;
+      --shadow: 0 8px 22px rgba(20, 34, 48, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 22px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--surface-2);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(340px, 500px) minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px 22px 22px;
+    }
+
+    section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .panel-body, form {
+      padding: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #ffffff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      margin-bottom: 13px;
+    }
+
+    .checkbox-field input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+
+    .checkbox-field label {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      text-transform: none;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 3px;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 13px;
+      color: var(--text);
+      background: var(--surface-2);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    button.secondary {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+      color: #ffffff;
+    }
+
+    button.danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #ffffff;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .message {
+      min-height: 38px;
+      margin-top: 13px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .message.ok {
+      color: var(--ok);
+      border-color: #a8d4b9;
+      background: #edf8f1;
+    }
+
+    .message.warn {
+      color: var(--warn);
+      border-color: #dec787;
+      background: #fff8e5;
+    }
+
+    .message.error {
+      color: var(--danger);
+      border-color: #e1b2b2;
+      background: #fff0f0;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfd;
+      padding: 10px;
+      min-height: 72px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      max-height: 250px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: #ffffff;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f8fbfd;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .command {
+      min-height: 54px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      font: 13px Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .console {
+      height: 260px;
+      overflow: auto;
+      margin: 0;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #101821;
+      background: #101821;
+      color: #dce7f2;
+      font: 13px Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 1000px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .actions button {
+        flex: 1 1 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Known Protein Mapping</h1>
+    <nav class="tabs" aria-label="Workflow tabs">
+      <a class="tab" href="/">Presence/Absence</a>
+      <a class="tab active" href="/mapping">Known Proteins</a>
+      <a class="tab" href="/orthofinder">OrthoFinder</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <div class="panel-header">Search Setup</div>
+      <form id="mappingForm">
+        <div class="field">
+          <label for="orthogroupsPath">Orthogroups.tsv</label>
+          <input id="orthogroupsPath" value="__DEFAULT_OG_TSV__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="speciesFastaDir">Species FASTA Folder</label>
+          <input id="speciesFastaDir" value="__DEFAULT_SPECIES_FASTA_DIR__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="querySource">Known Protein FASTA Zip/Folder</label>
+          <input id="querySource" value="__DEFAULT_QUERY_SOURCE__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="outputDir">Output Folder</label>
+          <input id="outputDir" value="__DEFAULT_MAPPING_OUTPUT__" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="diamondBin">DIAMOND Executable</label>
+          <input id="diamondBin" value="diamond" autocomplete="off">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="threads">Threads</label>
+            <input id="threads" type="number" min="1" max="128" value="8">
+          </div>
+          <div class="field">
+            <label for="maxTargetSeqs">Max Target Seqs</label>
+            <input id="maxTargetSeqs" type="number" min="1" max="100" value="5">
+          </div>
+        </div>
+        <div class="field">
+          <label for="evalue">E-value</label>
+          <input id="evalue" value="1e-5" autocomplete="off">
+        </div>
+        <div class="checkbox-field">
+          <input id="sensitive" type="checkbox" checked>
+          <label for="sensitive">Sensitive search</label>
+        </div>
+        <div class="checkbox-field">
+          <input id="recursiveSpecies" type="checkbox">
+          <label for="recursiveSpecies">Scan species FASTA folder recursively</label>
+        </div>
+        <div class="actions">
+          <button type="button" id="summaryBtn">Summarize</button>
+          <button type="button" id="commandBtn" class="secondary">Build Command</button>
+          <button type="submit" class="primary" id="runBtn">Run Mapping</button>
+          <button type="button" class="danger" id="stopBtn">Stop</button>
+        </div>
+        <div id="message" class="message">Ready.</div>
+      </form>
+    </section>
+
+    <section>
+      <div class="panel-header">Input Summary</div>
+      <div class="panel-body">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Orthogroups</div>
+            <div class="metric-value" id="metricOgs">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">OG Proteins</div>
+            <div class="metric-value" id="metricOgProteins">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Queries</div>
+            <div class="metric-value" id="metricQueries">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Target FASTAs</div>
+            <div class="metric-value" id="metricFastas">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Target Seqs</div>
+            <div class="metric-value" id="metricTargetSeqs">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">DIAMOND</div>
+            <div class="metric-value" id="metricDiamond">No</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Query File</th>
+                <th style="width: 110px">Proteins</th>
+              </tr>
+            </thead>
+            <tbody id="queryTable">
+              <tr><td colspan="2">No summary loaded.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="full">
+      <div class="panel-header">Mapping Job</div>
+      <div class="panel-body">
+        <div class="command" id="commandBox">No command built yet.</div>
+        <pre class="console" id="logBox"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const message = document.getElementById("message");
+    const mappingForm = document.getElementById("mappingForm");
+    const commandBox = document.getElementById("commandBox");
+    const logBox = document.getElementById("logBox");
+    const runBtn = document.getElementById("runBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    function payload() {
+      return {
+        orthogroups_path: document.getElementById("orthogroupsPath").value.trim(),
+        species_fasta_dir: document.getElementById("speciesFastaDir").value.trim(),
+        query_source: document.getElementById("querySource").value.trim(),
+        output_dir: document.getElementById("outputDir").value.trim(),
+        diamond_bin: document.getElementById("diamondBin").value.trim() || "diamond",
+        threads: Number(document.getElementById("threads").value || 1),
+        evalue: document.getElementById("evalue").value.trim() || "1e-5",
+        max_target_seqs: Number(document.getElementById("maxTargetSeqs").value || 5),
+        sensitive: document.getElementById("sensitive").checked,
+        recursive_species: document.getElementById("recursiveSpecies").checked
+      };
+    }
+
+    function setMessage(text, kind = "") {
+      message.className = "message" + (kind ? " " + kind : "");
+      message.textContent = text;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    async function postJson(url, body) {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || `Request failed with ${response.status}`);
+      }
+      return data;
+    }
+
+    function renderSummary(data) {
+      document.getElementById("metricOgs").textContent = data.orthogroup_count || 0;
+      document.getElementById("metricOgProteins").textContent = data.og_assigned_protein_count || 0;
+      document.getElementById("metricQueries").textContent = data.query_count || 0;
+      document.getElementById("metricFastas").textContent = data.species_fasta_count || 0;
+      document.getElementById("metricTargetSeqs").textContent = data.species_sequence_count || 0;
+      document.getElementById("metricDiamond").textContent = data.diamond_found ? "Yes" : "No";
+      const rows = data.query_files || [];
+      document.getElementById("queryTable").innerHTML = rows.length
+        ? rows.map(row => `<tr><td>${escapeHtml(row.name)}</td><td>${row.query_count}</td></tr>`).join("")
+        : '<tr><td colspan="2">No query FASTA files found.</td></tr>';
+    }
+
+    document.getElementById("summaryBtn").addEventListener("click", async () => {
+      try {
+        const data = await postJson("/api/mapping/summary", payload());
+        renderSummary(data);
+        let text = "Inputs summarized.";
+        if (data.species_error) {
+          text = data.species_error;
+        } else if (data.species_fasta_count === 0) {
+          text = "No species FASTA files found.";
+        } else if (!data.diamond_found) {
+          text = "DIAMOND not found. Install DIAMOND or provide its executable path before running mapping.";
+        }
+        const hasIssue = !data.diamond_found || data.species_error || data.species_fasta_count === 0;
+        setMessage(text, hasIssue ? "warn" : "ok");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    document.getElementById("commandBtn").addEventListener("click", async () => {
+      try {
+        const data = await postJson("/api/mapping/command", payload());
+        renderSummary(data.summary);
+        commandBox.textContent = data.command;
+        setMessage("Command built.", data.summary.diamond_found ? "ok" : "warn");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    mappingForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        const data = await postJson("/api/mapping/run", payload());
+        commandBox.textContent = data.command;
+        renderSummary(data.summary);
+        setMessage("Mapping job started.", "ok");
+        await refreshStatus();
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    stopBtn.addEventListener("click", async () => {
+      try {
+        await postJson("/api/mapping/stop", {});
+        setMessage("Stop requested.", "warn");
+        await refreshStatus();
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    async function refreshStatus() {
+      const response = await fetch("/api/mapping/status");
+      const data = await response.json();
+      if (data.command) commandBox.textContent = data.command;
+      logBox.textContent = data.log || "";
+      const running = data.status === "running";
+      runBtn.disabled = running;
+      stopBtn.disabled = !running;
+      if (running) {
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+    }
+
+    setInterval(refreshStatus, 2000);
+    refreshStatus();
+  </script>
+</body>
+</html>

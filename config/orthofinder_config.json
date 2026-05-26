@@ -1,0 +1,9 @@
+{
+  "input_dir": "examples/proteomes",
+  "output_dir": "results/orthofinder",
+  "orthofinder_bin": "orthofinder",
+  "threads": 8,
+  "analysis_threads": 8,
+  "search_program": "auto",
+  "orthogroups_only": true
+}
