@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HaptoCalc Workbench Mockup</title>
+  <style>
+    :root {
+      --ink: #17242c;
+      --muted: #60727d;
+      --line: #c9d7dd;
+      --page: #f3f7f8;
+      --panel: #ffffff;
+      --teal: #0f6f6a;
+      --teal-dark: #0a4d4b;
+      --cyan: #dff3f2;
+      --blue: #285f80;
+      --coral: #bd5b4c;
+      --gold: #9b7224;
+      --green: #25744e;
+      --shadow: 0 10px 28px rgba(19, 38, 49, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      background: #12313a;
+      color: #eaf4f5;
+      padding: 18px 14px;
+      border-right: 1px solid #0d242c;
+    }
+
+    .brand {
+      padding: 8px 10px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      margin-top: 6px;
+      color: #a9c3c8;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .nav-group {
+      margin-top: 18px;
+    }
+
+    .nav-title {
+      padding: 0 10px 8px;
+      color: #96b4ba;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 9px 10px;
+      color: #d8e8eb;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .nav-item.active {
+      background: var(--teal);
+      color: #ffffff;
+    }
+
+    .nav-icon {
+      width: 18px;
+      text-align: center;
+      color: #b7d2d6;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 22px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.15;
+    }
+
+    .subhead {
+      margin-top: 5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .status-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #f8fbfc;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.ok {
+      color: var(--green);
+      border-color: #acd7bd;
+      background: #eef8f2;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(360px, 430px) minmax(0, 1fr) 330px;
+      gap: 16px;
+      padding: 18px 22px 22px;
+      min-width: 0;
+    }
+
+    .panel {
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-title {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-body {
+      padding: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #ffffff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .threshold-control {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfc;
+      margin-bottom: 12px;
+    }
+
+    .threshold-control input {
+      height: 44px;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .threshold-copy {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 13px;
+      color: var(--ink);
+      background: #edf3f7;
+      font: inherit;
+      font-weight: 800;
+      cursor: default;
+    }
+
+    button.primary {
+      background: var(--teal);
+      color: #ffffff;
+      border-color: var(--teal);
+    }
+
+    button.secondary {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfc;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .candidate-list {
+      display: grid;
+      gap: 8px;
+      max-height: 450px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .candidate-row {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) 96px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .og-id {
+      font-weight: 800;
+      color: var(--teal-dark);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 7px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--cyan);
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .chip.coral {
+      background: #faece9;
+      color: var(--coral);
+      border-color: #e2b7ae;
+    }
+
+    .members {
+      text-align: right;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .copilot {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .chat {
+      height: 486px;
+      overflow: auto;
+      padding: 12px;
+      background: #fbfdff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .bubble {
+      padding: 10px 11px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      margin-bottom: 10px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .bubble.agent {
+      background: #f3f6f8;
+    }
+
+    .bubble.user {
+      background: var(--cyan);
+      border-color: #b8d8d6;
+    }
+
+    .copilot-actions {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1180px) {
+      .content {
+        grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+      }
+
+      .copilot {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        display: none;
+      }
+
+      .header-row,
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .status-strip {
+        justify-content: flex-start;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(110px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="brand-title">HaptoCalc</div>
+        <div class="brand-subtitle">Orthogroup analysis workbench for calcification discovery</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Analysis</div>
+        <a class="nav-item active" href="#"><span class="nav-icon">01</span>Presence / Absence</a>
+        <a class="nav-item" href="#"><span class="nav-icon">02</span>Known Proteins</a>
+        <a class="nav-item" href="#"><span class="nav-icon">03</span>Reports</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Run Setup</div>
+        <a class="nav-item" href="#"><span class="nav-icon">04</span>OrthoFinder / HPC</a>
+        <a class="nav-item" href="#"><span class="nav-icon">05</span>Species Manifest</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header>
+        <div class="header-row">
+          <div>
+            <h1>Presence/Absence Workbench</h1>
+            <div class="subhead">Find orthogroups enriched in calcifying haptophytes and export reproducible run reports.</div>
+          </div>
+          <div class="status-strip">
+            <span class="pill ok">Metadata OK</span>
+            <span class="pill ok">Orthogroups loaded</span>
+            <span class="pill">No warnings</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="panel">
+          <div class="panel-title">Filter Setup</div>
+          <div class="panel-body">
+            <div class="field">
+              <label>Orthogroups.tsv</label>
+              <input value="Orthogroups_diamond (1).tsv">
+            </div>
+            <div class="field">
+              <label>Species Metadata</label>
+              <input value="orthogroups_diamond_species_metadata.tsv">
+            </div>
+            <div class="field">
+              <label>Direction</label>
+              <select>
+                <option>Calcifying-specific</option>
+                <option>Non-calcifying-specific</option>
+              </select>
+            </div>
+            <div class="threshold-control">
+              <input value="4">
+              <div class="threshold-copy">
+                Calcifying species required<br>
+                <strong>of 7 total calcifying species</strong>
+              </div>
+            </div>
+            <div class="threshold-control">
+              <input value="2">
+              <div class="threshold-copy">
+                Non-calcifying species allowed<br>
+                <strong>of 20 background species</strong>
+              </div>
+            </div>
+            <div class="actions">
+              <button>Load Dataset</button>
+              <button class="primary">Find Candidate Orthogroups</button>
+              <button class="secondary">Export Full Report</button>
+            </div>
+            <div class="small-note">Current rule: present in at least 4 of 7 calcifying species and present in no more than 2 of 20 non-calcifying species.</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            Candidate Orthogroups
+            <span class="pill">496 candidates</span>
+          </div>
+          <div class="panel-body">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-label">Orthogroups</div>
+                <div class="metric-value">58,388</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Species</div>
+                <div class="metric-value">27</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Calcifying</div>
+                <div class="metric-value">7</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Non-Calcifying</div>
+                <div class="metric-value">20</div>
+              </div>
+            </div>
+
+            <div class="candidate-list">
+              <div class="candidate-row">
+                <div class="og-id">OG0000049</div>
+                <div class="chips">
+                  <span class="chip">7/7 calcifying</span>
+                  <span class="chip coral">0/20 background</span>
+                  <span class="chip">specificity 1.0</span>
+                </div>
+                <div class="members">502 proteins</div>
+              </div>
+              <div class="candidate-row">
+                <div class="og-id">OG0001976</div>
+                <div class="chips">
+                  <span class="chip">7/7 calcifying</span>
+                  <span class="chip coral">0/20 background</span>
+                  <span class="chip">specificity 1.0</span>
+                </div>
+                <div class="members">73 proteins</div>
+              </div>
+              <div class="candidate-row">
+                <div class="og-id">OG0009301</div>
+                <div class="chips">
+                  <span class="chip">7/7 calcifying</span>
+                  <span class="chip coral">0/20 background</span>
+                  <span class="chip">specificity 1.0</span>
+                </div>
+                <div class="members">29 proteins</div>
+              </div>
+              <div class="candidate-row">
+                <div class="og-id">OG0013147</div>
+                <div class="chips">
+                  <span class="chip">6/7 calcifying</span>
+                  <span class="chip coral">0/20 background</span>
+                  <span class="chip">specificity 0.8571</span>
+                </div>
+                <div class="members">21 proteins</div>
+              </div>
+              <div class="candidate-row">
+                <div class="og-id">OG0038200</div>
+                <div class="chips">
+                  <span class="chip">4/7 calcifying</span>
+                  <span class="chip coral">1/20 background</span>
+                  <span class="chip">specificity 0.5214</span>
+                </div>
+                <div class="members">5 proteins</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel copilot">
+          <div class="panel-title">HaptoCalc Copilot</div>
+          <div class="chat">
+            <div class="bubble agent">I can check metadata, compare thresholds, explain an orthogroup, or draft the methods summary for this run.</div>
+            <div class="bubble user">compare thresholds</div>
+            <div class="bubble agent">Threshold comparison:
+- 7/7 calcifying, 0/20 background: 11 candidates
+- 6/7 calcifying, 0/20 background: 19 candidates
+- 4/7 calcifying, <=2/20 background: 496 candidates</div>
+            <div class="bubble user">explain OG0000049</div>
+            <div class="bubble agent">OG0000049 is present in all 7 calcifying species and absent from all 20 non-calcifying species. It passes the current filter and contains 502 member proteins.</div>
+          </div>
+          <div class="copilot-actions">
+            <button>Summarize Dataset</button>
+            <button>Compare Thresholds</button>
+            <button>Check Metadata</button>
+            <button>Draft Methods Summary</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,99 +3,249 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orthogroup Presence/Absence</title>
+  <title>HaptoCalc Presence/Absence</title>
   <style>
     :root {
-      --bg: #f4f7fa;
-      --surface: #ffffff;
-      --surface-2: #edf3f7;
-      --text: #16212b;
-      --muted: #617080;
-      --line: #cbd7e2;
-      --accent: #1d7068;
-      --accent-2: #245c7d;
-      --danger: #a23b3b;
-      --warn: #875a0a;
-      --ok: #1f6c43;
-      --shadow: 0 8px 22px rgba(20, 34, 48, 0.08);
+      --ink: #17242c;
+      --muted: #60727d;
+      --line: #c9d7dd;
+      --page: #f3f7f8;
+      --panel: #ffffff;
+      --teal: #0f6f6a;
+      --teal-dark: #0a4d4b;
+      --cyan: #dff3f2;
+      --blue: #285f80;
+      --coral: #bd5b4c;
+      --gold: #9b7224;
+      --green: #25744e;
+      --red: #a23b3b;
+      --shadow: 0 10px 28px rgba(19, 38, 49, 0.08);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--page);
+      color: var(--ink);
       font-family: Arial, Helvetica, sans-serif;
       font-size: 14px;
       letter-spacing: 0;
     }
 
-    header {
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      background: #12313a;
+      color: #eaf4f5;
+      padding: 18px 14px;
+      border-right: 1px solid #0d242c;
+    }
+
+    .brand {
+      padding: 8px 10px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      margin-bottom: 16px;
+    }
+
+    .brand-row {
       display: flex;
       align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #e8f7f4;
+      color: var(--teal-dark);
+      font-weight: 900;
+    }
+
+    .brand-title {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      margin-top: 8px;
+      color: #a9c3c8;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .nav-group {
+      margin-top: 18px;
+    }
+
+    .nav-title {
+      padding: 0 10px 8px;
+      color: #96b4ba;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 9px 10px;
+      color: #d8e8eb;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .nav-item.active {
+      background: var(--teal);
+      color: #ffffff;
+    }
+
+    .nav-icon {
+      width: 22px;
+      color: #b7d2d6;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 22px;
+    }
+
+    .header-row {
+      display: flex;
       justify-content: space-between;
       gap: 18px;
-      padding: 16px 22px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
     }
 
     h1 {
       margin: 0;
-      font-size: 20px;
-      line-height: 1.2;
+      font-size: 23px;
+      line-height: 1.15;
     }
 
-    .tabs {
+    .subhead {
+      margin-top: 5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .status-strip {
       display: flex;
-      align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .tab {
+    .pill {
       display: inline-flex;
       align-items: center;
-      min-height: 36px;
-      padding: 8px 12px;
+      min-height: 30px;
+      padding: 6px 9px;
       border-radius: 6px;
       border: 1px solid var(--line);
-      color: var(--text);
-      background: var(--surface-2);
+      background: #f8fbfc;
+      color: var(--muted);
+      font-size: 12px;
       font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.ok {
+      color: var(--green);
+      border-color: #acd7bd;
+      background: #eef8f2;
+    }
+
+    .pill.warn {
+      color: var(--gold);
+      border-color: #dfc989;
+      background: #fff8e6;
+    }
+
+    .pill.error {
+      color: var(--red);
+      border-color: #e0b5b5;
+      background: #fff0f0;
+    }
+
+    .mobile-tabs {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .mobile-tabs a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #edf3f7;
+      font-weight: 800;
       text-decoration: none;
     }
 
-    .tab.active {
-      background: var(--accent);
-      border-color: var(--accent);
+    .mobile-tabs a.active {
+      background: var(--teal);
+      border-color: var(--teal);
       color: #ffffff;
     }
 
-    main {
+    .content {
       display: grid;
-      grid-template-columns: minmax(330px, 460px) minmax(0, 1fr);
+      grid-template-columns: minmax(360px, 430px) minmax(0, 1fr) 330px;
       gap: 16px;
-      padding: 16px 22px 22px;
+      padding: 18px 22px 22px;
+      min-width: 0;
     }
 
-    section {
+    .panel {
       min-width: 0;
+      background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: var(--surface);
       box-shadow: var(--shadow);
     }
 
-    .panel-header {
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       padding: 13px 15px;
       border-bottom: 1px solid var(--line);
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .panel-body, form {
+    .panel-body,
+    form {
       padding: 15px;
     }
 
@@ -104,36 +254,66 @@
       margin-bottom: 6px;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       height: 40px;
       border: 1px solid var(--line);
       border-radius: 6px;
       padding: 8px 10px;
       background: #ffffff;
-      color: var(--text);
+      color: var(--ink);
       font: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    button:focus {
+      outline: 2px solid rgba(15, 111, 106, 0.22);
+      outline-offset: 2px;
     }
 
     .field {
       margin-bottom: 13px;
     }
 
-    .row {
+    .threshold-control {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 104px minmax(0, 1fr);
+      align-items: center;
       gap: 12px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfc;
+      margin-bottom: 12px;
+    }
+
+    .threshold-control input {
+      height: 44px;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .threshold-copy {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .threshold-copy strong {
+      color: var(--ink);
     }
 
     .actions {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      padding-top: 3px;
+      flex-wrap: wrap;
+      margin-top: 8px;
     }
 
     button {
@@ -141,23 +321,23 @@
       border: 1px solid var(--line);
       border-radius: 6px;
       padding: 9px 13px;
-      color: var(--text);
-      background: var(--surface-2);
+      color: var(--ink);
+      background: #edf3f7;
       font: inherit;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
     }
 
     button.primary {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--teal);
       color: #ffffff;
+      border-color: var(--teal);
     }
 
     button.secondary {
-      background: var(--accent-2);
-      border-color: var(--accent-2);
+      background: var(--blue);
       color: #ffffff;
+      border-color: var(--blue);
     }
 
     .message {
@@ -166,55 +346,150 @@
       padding: 10px 12px;
       border-radius: 6px;
       border: 1px solid var(--line);
-      background: var(--surface-2);
+      background: #f8fbfc;
       color: var(--muted);
       line-height: 1.35;
     }
 
     .message.ok {
-      color: var(--ok);
+      color: var(--green);
       border-color: #a8d4b9;
       background: #edf8f1;
     }
 
     .message.warn {
-      color: var(--warn);
+      color: var(--gold);
       border-color: #dec787;
       background: #fff8e5;
     }
 
     .message.error {
-      color: var(--danger);
+      color: var(--red);
       border-color: #e1b2b2;
       background: #fff0f0;
     }
 
-    .metrics {
+    .rule-card {
+      margin-top: 10px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .results-panel {
+      min-height: 520px;
+    }
+
+    .metric-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      grid-template-columns: repeat(5, minmax(108px, 1fr));
       gap: 10px;
       margin-bottom: 14px;
     }
 
     .metric {
+      padding: 11px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #f8fbfd;
-      padding: 10px;
-      min-height: 72px;
+      background: #f8fbfc;
+      min-height: 76px;
     }
 
     .metric-label {
       color: var(--muted);
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
     }
 
     .metric-value {
       margin-top: 8px;
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .candidate-list {
+      display: grid;
+      gap: 8px;
+      max-height: 450px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .result-note {
+      margin-bottom: 10px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .candidate-row {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr) 96px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .og-id {
+      color: var(--teal-dark);
+      font-weight: 800;
+    }
+
+    .species-line {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 5px 7px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--cyan);
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .chip.coral {
+      background: #faece9;
+      color: var(--coral);
+      border-color: #e2b7ae;
+    }
+
+    .chip.gold {
+      background: #fff7e4;
+      color: var(--gold);
+      border-color: #dfc989;
+    }
+
+    .members {
+      text-align: right;
+      color: var(--muted);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .species-panel {
+      grid-column: 1 / span 2;
     }
 
     .species-grid {
@@ -224,12 +499,12 @@
     }
 
     .species-list {
-      max-height: 220px;
+      max-height: 230px;
       overflow: auto;
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: 8px;
       background: #fbfdff;
-      padding: 8px;
+      padding: 9px;
     }
 
     .species-list h2 {
@@ -238,7 +513,7 @@
     }
 
     .species-list div {
-      padding: 5px 4px;
+      padding: 6px 4px;
       border-top: 1px solid #e6edf3;
       word-break: break-word;
     }
@@ -247,93 +522,50 @@
       border-top: 0;
     }
 
-    .table-wrap {
-      max-height: 430px;
-      overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      background: #ffffff;
-    }
-
-    th, td {
-      padding: 9px 8px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-      word-break: break-word;
-    }
-
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background: #f8fbfd;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    .empty {
-      padding: 18px;
-      color: var(--muted);
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .copilot-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 260px;
-      gap: 12px;
+    .copilot {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
     .chat-log {
-      height: 260px;
+      height: 398px;
       overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      padding: 12px;
       background: #fbfdff;
-      padding: 10px;
+      border-bottom: 1px solid var(--line);
     }
 
     .chat-message {
-      max-width: 90%;
+      padding: 10px 11px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
       margin-bottom: 10px;
-      padding: 9px 10px;
-      border-radius: 8px;
-      line-height: 1.35;
+      line-height: 1.4;
       white-space: pre-wrap;
     }
 
-    .chat-message.user {
-      margin-left: auto;
-      background: #e8f4f2;
-      border: 1px solid #b8d9d5;
+    .chat-message.agent {
+      background: #f3f6f8;
     }
 
-    .chat-message.agent {
-      background: #f2f5f8;
-      border: 1px solid var(--line);
+    .chat-message.user {
+      background: var(--cyan);
+      border-color: #b8d8d6;
     }
 
     .chat-input-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
     }
 
     .quick-actions {
       display: grid;
       gap: 8px;
-      align-content: start;
+      padding: 12px;
     }
 
     .quick-actions button {
@@ -341,27 +573,85 @@
       text-align: left;
     }
 
-    @media (max-width: 1000px) {
-      header {
-        align-items: flex-start;
+    .empty {
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fbfdff;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1240px) {
+      .content {
+        grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+      }
+
+      .copilot {
+        grid-column: 1 / -1;
+      }
+
+      .species-panel {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        display: none;
+      }
+
+      .header-row {
         flex-direction: column;
       }
 
-      main {
-        grid-template-columns: 1fr;
-        padding: 12px;
+      .status-strip {
+        justify-content: flex-start;
       }
 
-      .metrics {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      .mobile-tabs {
+        display: flex;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(108px, 1fr));
+      }
+
+      .species-grid {
+        grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 640px) {
-      .row,
-      .species-grid,
-      .copilot-layout {
+      header {
+        padding: 14px;
+      }
+
+      .threshold-control,
+      .candidate-row,
+      .chat-input-row {
         grid-template-columns: 1fr;
+      }
+
+      .candidate-row {
+        align-items: start;
+      }
+
+      .members {
+        text-align: left;
       }
 
       .actions button {
@@ -371,117 +661,138 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Orthogroup Presence/Absence</h1>
-    <nav class="tabs" aria-label="Workflow tabs">
-      <a class="tab active" href="/">Presence/Absence</a>
-      <a class="tab" href="/mapping">Known Proteins</a>
-      <a class="tab" href="/orthofinder">OrthoFinder</a>
-    </nav>
-  </header>
-
-  <main>
-    <section>
-      <div class="panel-header">Filter Setup</div>
-      <form id="filterForm">
-        <div class="field">
-          <label for="orthogroupsPath">Orthogroups.tsv</label>
-          <input id="orthogroupsPath" value="__DEFAULT_OG_TSV__" autocomplete="off">
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="brand-row">
+          <div class="brand-mark">HC</div>
+          <div class="brand-title">HaptoCalc</div>
         </div>
-        <div class="field">
-          <label for="metadataPath">Species Metadata</label>
-          <input id="metadataPath" value="__DEFAULT_METADATA__" autocomplete="off">
-        </div>
-        <div class="field">
-          <label for="outputDir">Output Folder</label>
-          <input id="outputDir" value="__DEFAULT_ANALYSIS_OUTPUT__" autocomplete="off">
-        </div>
-        <div class="field">
-          <label for="direction">Direction</label>
-          <select id="direction">
-            <option value="calcifying">Calcifying-specific</option>
-            <option value="non_calcifying">Non-calcifying-specific</option>
-          </select>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label for="minTarget">Target Min Present</label>
-            <input id="minTarget" type="number" min="0" value="4">
-          </div>
-          <div class="field">
-            <label for="maxBackground">Background Max Present</label>
-            <input id="maxBackground" type="number" min="0" value="2">
-          </div>
-        </div>
-        <div class="actions">
-          <button type="button" id="loadBtn">Load</button>
-          <button type="submit" class="primary">Apply Filter</button>
-          <button type="button" id="exportBtn" class="secondary">Export</button>
-          <button type="button" id="reportBtn" class="secondary">Export Report</button>
-        </div>
-        <div id="message" class="message">Ready.</div>
-      </form>
-    </section>
-
-    <section>
-      <div class="panel-header">Dataset</div>
-      <div class="panel-body">
-        <div class="metrics">
-          <div class="metric">
-            <div class="metric-label">Orthogroups</div>
-            <div class="metric-value" id="metricOgs">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Species</div>
-            <div class="metric-value" id="metricSpecies">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Calcifying</div>
-            <div class="metric-value" id="metricCalc">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Non-Calcifying</div>
-            <div class="metric-value" id="metricNoncalc">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Candidates</div>
-            <div class="metric-value" id="metricCandidates">0</div>
-          </div>
-        </div>
-        <div class="species-grid">
-          <div class="species-list">
-            <h2>Calcifying</h2>
-            <div id="calcifyingSpecies">None loaded.</div>
-          </div>
-          <div class="species-list">
-            <h2>Non-Calcifying</h2>
-            <div id="nonCalcifyingSpecies">None loaded.</div>
-          </div>
-        </div>
+        <div class="brand-subtitle">Orthogroup analysis workbench for calcification discovery</div>
       </div>
-    </section>
-
-    <section class="full">
-      <div class="panel-header">Candidate Orthogroups</div>
-      <div class="panel-body">
-        <div class="table-wrap" id="resultWrap">
-          <div class="empty">No filter run yet.</div>
-        </div>
+      <div class="nav-group">
+        <div class="nav-title">Analysis</div>
+        <a class="nav-item active" href="/"><span class="nav-icon">01</span>Presence / Absence</a>
+        <a class="nav-item" href="/mapping"><span class="nav-icon">02</span>Known Proteins</a>
+        <a class="nav-item" href="#results"><span class="nav-icon">03</span>Reports</a>
       </div>
-    </section>
+      <div class="nav-group">
+        <div class="nav-title">Run Setup</div>
+        <a class="nav-item" href="/orthofinder"><span class="nav-icon">04</span>OrthoFinder / HPC</a>
+      </div>
+    </aside>
 
-    <section class="full">
-      <div class="panel-header">Pipeline Copilot</div>
-      <div class="panel-body">
-        <div class="copilot-layout">
+    <div class="main">
+      <header>
+        <div class="header-row">
           <div>
-            <div class="chat-log" id="chatLog">
-              <div class="chat-message agent">I can summarize the dataset, compare thresholds, check metadata, explain an orthogroup, or draft a methods summary.</div>
+            <h1>Presence/Absence Workbench</h1>
+            <div class="subhead">Find orthogroups enriched in calcifying haptophytes and export reproducible run reports.</div>
+          </div>
+          <div class="status-strip" aria-label="Dataset status">
+            <span class="pill" id="statusMetadata">Metadata pending</span>
+            <span class="pill" id="statusOrthogroups">Dataset not loaded</span>
+            <span class="pill" id="statusWarnings">Ready</span>
+          </div>
+        </div>
+        <nav class="mobile-tabs" aria-label="Workflow tabs">
+          <a class="active" href="/">Presence / Absence</a>
+          <a href="/mapping">Known Proteins</a>
+          <a href="/orthofinder">OrthoFinder</a>
+        </nav>
+      </header>
+
+      <main class="content">
+        <section class="panel setup-panel">
+          <div class="panel-title">Filter Setup</div>
+          <form id="filterForm">
+            <div class="field">
+              <label for="orthogroupsPath">Orthogroups.tsv</label>
+              <input id="orthogroupsPath" value="__DEFAULT_OG_TSV__" autocomplete="off">
             </div>
-            <div class="chat-input-row">
-              <input id="agentInput" autocomplete="off" placeholder="Ask about this orthogroup analysis">
-              <button type="button" id="agentSend" class="primary">Ask</button>
+            <div class="field">
+              <label for="metadataPath">Species Metadata</label>
+              <input id="metadataPath" value="__DEFAULT_METADATA__" autocomplete="off">
             </div>
+            <div class="field">
+              <label for="outputDir">Output Folder</label>
+              <input id="outputDir" value="__DEFAULT_ANALYSIS_OUTPUT__" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="direction">Direction</label>
+              <select id="direction">
+                <option value="calcifying">Calcifying-specific</option>
+                <option value="non_calcifying">Non-calcifying-specific</option>
+              </select>
+            </div>
+            <div class="threshold-control">
+              <input id="minTarget" type="number" min="0" value="4">
+              <div class="threshold-copy">
+                Target species required<br>
+                <strong id="targetTotalCopy">of target species</strong>
+              </div>
+            </div>
+            <div class="threshold-control">
+              <input id="maxBackground" type="number" min="0" value="2">
+              <div class="threshold-copy">
+                Background species allowed<br>
+                <strong id="backgroundTotalCopy">of background species</strong>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" id="loadBtn">Load Dataset</button>
+              <button type="submit" class="primary">Find Candidates</button>
+              <button type="button" id="exportBtn" class="secondary">Export TSV</button>
+              <button type="button" id="reportBtn" class="secondary">Export Report</button>
+            </div>
+            <div id="message" class="message">Ready.</div>
+            <div id="ruleText" class="rule-card">Rule: at least 4 target species and no more than 2 background species.</div>
+          </form>
+        </section>
+
+        <section class="panel results-panel" id="results">
+          <div class="panel-title">
+            Candidate Orthogroups
+            <span class="pill" id="candidatePill">0 candidates</span>
+          </div>
+          <div class="panel-body">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="metric-label">Orthogroups</div>
+                <div class="metric-value" id="metricOgs">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Species</div>
+                <div class="metric-value" id="metricSpecies">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Calcifying</div>
+                <div class="metric-value" id="metricCalc">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Non-Calcifying</div>
+                <div class="metric-value" id="metricNoncalc">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Candidates</div>
+                <div class="metric-value" id="metricCandidates">0</div>
+              </div>
+            </div>
+            <div class="result-note" id="resultNote">Run a filter to show candidate orthogroups.</div>
+            <div class="candidate-list" id="resultWrap">
+              <div class="empty">No filter run yet.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel copilot">
+          <div class="panel-title">HaptoCalc Copilot</div>
+          <div class="chat-log" id="chatLog">
+            <div class="chat-message agent">Ready.</div>
+          </div>
+          <div class="chat-input-row">
+            <input id="agentInput" autocomplete="off" placeholder="Ask about this orthogroup analysis">
+            <button type="button" id="agentSend" class="primary">Ask</button>
           </div>
           <div class="quick-actions">
             <button type="button" data-agent-prompt="summarize dataset">Summarize Dataset</button>
@@ -489,15 +800,32 @@
             <button type="button" data-agent-prompt="check metadata">Check Metadata</button>
             <button type="button" data-agent-prompt="write a methods summary">Methods Summary</button>
           </div>
-        </div>
-      </div>
-    </section>
-  </main>
+        </section>
+
+        <section class="panel species-panel">
+          <div class="panel-title">Species Manifest</div>
+          <div class="panel-body">
+            <div class="species-grid">
+              <div class="species-list">
+                <h2>Calcifying</h2>
+                <div id="calcifyingSpecies">None loaded.</div>
+              </div>
+              <div class="species-list">
+                <h2>Non-Calcifying</h2>
+                <div id="nonCalcifyingSpecies">None loaded.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
   <script>
     const message = document.getElementById("message");
     const filterForm = document.getElementById("filterForm");
     const resultWrap = document.getElementById("resultWrap");
+    const resultNote = document.getElementById("resultNote");
     const metricOgs = document.getElementById("metricOgs");
     const metricSpecies = document.getElementById("metricSpecies");
     const metricCalc = document.getElementById("metricCalc");
@@ -505,7 +833,15 @@
     const metricCandidates = document.getElementById("metricCandidates");
     const calcifyingSpecies = document.getElementById("calcifyingSpecies");
     const nonCalcifyingSpecies = document.getElementById("nonCalcifyingSpecies");
+    const candidatePill = document.getElementById("candidatePill");
+    const statusMetadata = document.getElementById("statusMetadata");
+    const statusOrthogroups = document.getElementById("statusOrthogroups");
+    const statusWarnings = document.getElementById("statusWarnings");
+    const targetTotalCopy = document.getElementById("targetTotalCopy");
+    const backgroundTotalCopy = document.getElementById("backgroundTotalCopy");
+    const ruleText = document.getElementById("ruleText");
     let lastPayload = null;
+    let lastSummary = null;
 
     function payload() {
       return {
@@ -521,6 +857,24 @@
     function setMessage(text, kind = "") {
       message.className = "message" + (kind ? " " + kind : "");
       message.textContent = text;
+    }
+
+    function setPill(node, text, kind = "") {
+      node.className = "pill" + (kind ? " " + kind : "");
+      node.textContent = text;
+    }
+
+    function formatNumber(value) {
+      const number = Number(value || 0);
+      return Number.isFinite(number) ? number.toLocaleString() : "0";
+    }
+
+    function plural(value, one, many) {
+      return Number(value) === 1 ? one : many;
+    }
+
+    function displayGroup(value) {
+      return String(value || "").replace("_", "-");
     }
 
     function escapeHtml(value) {
@@ -546,6 +900,28 @@
       return data;
     }
 
+    function directionGroups(summary = lastSummary || {}) {
+      const current = document.getElementById("direction").value;
+      const targetGroup = summary.target_group || current;
+      const backgroundGroup = summary.background_group || (current === "calcifying" ? "non_calcifying" : "calcifying");
+      const calcifyingCount = Number(summary.calcifying_count ?? (summary.calcifying_species || []).length ?? 0);
+      const nonCalcifyingCount = Number(summary.non_calcifying_count ?? (summary.non_calcifying_species || []).length ?? 0);
+      const targetTotal = Number(summary.target_total ?? (targetGroup === "calcifying" ? calcifyingCount : nonCalcifyingCount) ?? 0);
+      const backgroundTotal = Number(summary.background_total ?? (backgroundGroup === "calcifying" ? calcifyingCount : nonCalcifyingCount) ?? 0);
+      return { targetGroup, backgroundGroup, targetTotal, backgroundTotal };
+    }
+
+    function updateRuleText(summary = lastSummary || {}) {
+      const { targetGroup, backgroundGroup, targetTotal, backgroundTotal } = directionGroups(summary);
+      const minTarget = Number(document.getElementById("minTarget").value || 0);
+      const maxBackground = Number(document.getElementById("maxBackground").value || 0);
+      const targetDisplay = targetTotal ? `${targetTotal} ${displayGroup(targetGroup)} species` : `${displayGroup(targetGroup)} species`;
+      const backgroundDisplay = backgroundTotal ? `${backgroundTotal} ${displayGroup(backgroundGroup)} species` : `${displayGroup(backgroundGroup)} species`;
+      targetTotalCopy.textContent = `of ${targetDisplay}`;
+      backgroundTotalCopy.textContent = `of ${backgroundDisplay}`;
+      ruleText.textContent = `Rule: at least ${minTarget}/${targetTotal || "?"} ${displayGroup(targetGroup)} species and no more than ${maxBackground}/${backgroundTotal || "?"} ${displayGroup(backgroundGroup)} species.`;
+    }
+
     function renderSpecies(container, rows) {
       if (!rows || !rows.length) {
         container.textContent = "None loaded.";
@@ -555,59 +931,78 @@
     }
 
     function renderSummary(summary) {
-      metricOgs.textContent = summary.orthogroup_count ?? 0;
-      metricSpecies.textContent = summary.species_count ?? 0;
-      metricCalc.textContent = summary.calcifying_count ?? summary.target_total ?? 0;
-      metricNoncalc.textContent = summary.non_calcifying_count ?? summary.background_total ?? 0;
-      metricCandidates.textContent = summary.candidate_count ?? 0;
+      lastSummary = summary;
+      const candidateCount = Number(summary.candidate_count ?? 0);
+      const calcifyingCount = Number(summary.calcifying_count ?? (summary.calcifying_species || []).length ?? 0);
+      const nonCalcifyingCount = Number(summary.non_calcifying_count ?? (summary.non_calcifying_species || []).length ?? 0);
+      const warningCount = (summary.warnings || []).length;
+
+      metricOgs.textContent = formatNumber(summary.orthogroup_count);
+      metricSpecies.textContent = formatNumber(summary.species_count);
+      metricCalc.textContent = formatNumber(calcifyingCount);
+      metricNoncalc.textContent = formatNumber(nonCalcifyingCount);
+      metricCandidates.textContent = formatNumber(candidateCount);
+      candidatePill.textContent = `${formatNumber(candidateCount)} ${plural(candidateCount, "candidate", "candidates")}`;
+
       renderSpecies(calcifyingSpecies, summary.calcifying_species || []);
       renderSpecies(nonCalcifyingSpecies, summary.non_calcifying_species || []);
+
+      setPill(statusMetadata, calcifyingCount && nonCalcifyingCount ? "Metadata OK" : "Metadata pending", calcifyingCount && nonCalcifyingCount ? "ok" : "");
+      setPill(statusOrthogroups, Number(summary.orthogroup_count || 0) ? "Orthogroups loaded" : "Dataset not loaded", Number(summary.orthogroup_count || 0) ? "ok" : "");
+      setPill(statusWarnings, warningCount ? `${warningCount} ${plural(warningCount, "warning", "warnings")}` : "No warnings", warningCount ? "warn" : "ok");
+      updateRuleText(summary);
     }
 
-    function renderResults(rows) {
+    function renderResults(rows, summary = lastSummary || {}, rowLimit = null) {
       if (!rows || !rows.length) {
+        resultNote.textContent = "No orthogroups matched this threshold.";
         resultWrap.innerHTML = '<div class="empty">No orthogroups matched this threshold.</div>';
         return;
       }
-      resultWrap.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 11%">Orthogroup</th>
-              <th style="width: 12%">Target</th>
-              <th style="width: 13%">Background</th>
-              <th style="width: 10%">Specificity</th>
-              <th style="width: 9%">Tier</th>
-              <th style="width: 10%">Members</th>
-              <th>Target Species Present</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(row => `
-              <tr>
-                <td>${escapeHtml(row.Orthogroup)}</td>
-                <td>${row.target_present}/${row.target_total}</td>
-                <td>${row.background_present}/${row.background_total}</td>
-                <td>${row.specificity}</td>
-                <td>${escapeHtml(row.tier)}</td>
-                <td>${row.member_count}</td>
-                <td>${escapeHtml(row.target_species_present || "")}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
+      const candidateCount = Number(summary.candidate_count ?? rows.length);
+      const shownCount = rows.length;
+      if (candidateCount > shownCount) {
+        resultNote.textContent = `Showing top ${formatNumber(shownCount)} of ${formatNumber(candidateCount)} candidates. Export includes all candidates.`;
+      } else {
+        resultNote.textContent = `Showing ${formatNumber(shownCount)} ${plural(shownCount, "candidate", "candidates")}.`;
+      }
+      resultWrap.innerHTML = rows.map(row => {
+        const orthogroup = escapeHtml(row.Orthogroup);
+        const target = `${row.target_present}/${row.target_total} ${displayGroup(row.target_group)}`;
+        const background = `${row.background_present}/${row.background_total} ${displayGroup(row.background_group)}`;
+        const species = row.target_species_present ? escapeHtml(row.target_species_present) : "No target species listed";
+        return `
+          <div class="candidate-row">
+            <div>
+              <div class="og-id">${orthogroup}</div>
+              <div class="species-line">${species}</div>
+            </div>
+            <div class="chips">
+              <span class="chip">${escapeHtml(target)}</span>
+              <span class="chip coral">${escapeHtml(background)}</span>
+              <span class="chip gold">specificity ${escapeHtml(row.specificity)}</span>
+              <span class="chip">tier ${escapeHtml(row.tier)}</span>
+            </div>
+            <div class="members">${formatNumber(row.member_count)}<br>${plural(row.member_count, "protein", "proteins")}</div>
+          </div>
+        `;
+      }).join("");
     }
 
-    document.getElementById("loadBtn").addEventListener("click", async () => {
+    async function loadDataset(options = {}) {
       try {
         const data = await postJson("/api/og/summary", payload());
         renderSummary(data);
-        setMessage("Dataset loaded.", data.warnings && data.warnings.length ? "warn" : "ok");
+        if (!options.silent) {
+          setMessage("Dataset loaded.", data.warnings && data.warnings.length ? "warn" : "ok");
+        }
       } catch (error) {
+        setPill(statusWarnings, "Input error", "error");
         setMessage(error.message, "error");
       }
-    });
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", () => loadDataset());
 
     filterForm.addEventListener("submit", async event => {
       event.preventDefault();
@@ -615,9 +1010,10 @@
         const data = await postJson("/api/og/filter", payload());
         lastPayload = payload();
         renderSummary(data.summary);
-        renderResults(data.rows);
-        setMessage(`Filter matched ${data.summary.candidate_count} orthogroups.`, "ok");
+        renderResults(data.rows, data.summary, data.row_limit);
+        setMessage(`Filter matched ${formatNumber(data.summary.candidate_count)} orthogroups.`, "ok");
       } catch (error) {
+        setPill(statusWarnings, "Filter error", "error");
         setMessage(error.message, "error");
       }
     });
@@ -626,9 +1022,10 @@
       try {
         const data = await postJson("/api/og/export", lastPayload || payload());
         renderSummary(data.summary);
-        renderResults(data.rows);
-        setMessage(`Exported ${data.summary.candidate_count} orthogroups to ${data.paths.candidate_table}`, "ok");
+        renderResults(data.rows, data.summary, data.row_limit);
+        setMessage(`Exported ${formatNumber(data.summary.candidate_count)} orthogroups to ${data.paths.candidate_table}`, "ok");
       } catch (error) {
+        setPill(statusWarnings, "Export error", "error");
         setMessage(error.message, "error");
       }
     });
@@ -637,9 +1034,10 @@
       try {
         const data = await postJson("/api/og/report", lastPayload || payload());
         renderSummary(data.summary);
-        renderResults(data.rows);
+        renderResults(data.rows, data.summary, data.row_limit);
         setMessage(`Report exported to ${data.paths.run_report}`, "ok");
       } catch (error) {
+        setPill(statusWarnings, "Report error", "error");
         setMessage(error.message, "error");
       }
     });
@@ -683,6 +1081,14 @@
     document.querySelectorAll("[data-agent-prompt]").forEach(button => {
       button.addEventListener("click", () => askAgent(button.dataset.agentPrompt));
     });
+
+    ["direction", "minTarget", "maxBackground"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => updateRuleText());
+      document.getElementById(id).addEventListener("change", () => updateRuleText());
+    });
+
+    updateRuleText();
+    loadDataset({silent: true});
   </script>
 </body>
 </html>

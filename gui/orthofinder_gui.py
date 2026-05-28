@@ -686,6 +686,11 @@ def mapping_html() -> bytes:
     return html.encode("utf-8")
 
 
+def mockup_html() -> bytes:
+    path = PROJECT_ROOT / "gui" / "mockup_haptocalc.html"
+    return path.read_bytes()
+
+
 def validation_payload(input_dir: Path) -> dict[str, object]:
     summaries = validate_fasta_dir(input_dir)
     files = [
@@ -896,6 +901,14 @@ class Handler(BaseHTTPRequestHandler):
             return
         if path == "/mapping":
             html = mapping_html()
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+            return
+        if path == "/mockup":
+            html = mockup_html()
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(html)))
