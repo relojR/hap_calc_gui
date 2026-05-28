@@ -23,7 +23,7 @@ http://127.0.0.1:8765
 
 The default page is the `Orthogroups.tsv` presence/absence filter. The OrthoFinder launcher is available from the `OrthoFinder` tab.
 
-The `Known Proteins` tab maps known calcification proteins to orthogroups using the V2 DIAMOND-style workflow from the reference notebook. Plotting sections are not included.
+The `Known Proteins` tab maps known calcification proteins to orthogroups using the V2 DIAMOND-style.
 
 The `Pipeline Copilot` panel on the presence/absence page is the first agent layer. It routes user questions to deterministic pipeline tools, so its answers come from the same backend functions used by the GUI.
 
