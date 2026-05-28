@@ -67,14 +67,20 @@ def main() -> None:
         "sensitive": True,
         "recursive_species": False,
     }
+    agent_payload = {
+        "message": "compare thresholds",
+        "context": og_payload,
+    }
 
     status = request_json(f"{base_url}/api/status")
     validation = request_json(f"{base_url}/api/validate", orthofinder_payload)
     command = request_json(f"{base_url}/api/command", orthofinder_payload)
     og_summary = request_json(f"{base_url}/api/og/summary", og_payload)
     og_filter = request_json(f"{base_url}/api/og/filter", og_payload)
+    og_report = request_json(f"{base_url}/api/og/report", og_payload)
     mapping_summary = request_json(f"{base_url}/api/mapping/summary", mapping_payload)
     mapping_command = request_json(f"{base_url}/api/mapping/command", mapping_payload)
+    agent_response = request_json(f"{base_url}/api/agent/chat", agent_payload)
     server.shutdown()
 
     assert status["status"] == "idle"
@@ -83,8 +89,11 @@ def main() -> None:
     assert og_summary["calcifying_count"] == 7
     assert og_summary["non_calcifying_count"] == 20
     assert og_filter["summary"]["candidate_count"] > 0
+    assert og_report["paths"]["run_report"].endswith("run_report.md")
+    assert og_report["paths"]["settings_json"].endswith("settings.json")
     assert mapping_summary["query_file_count"] >= 0
     assert "known_protein_mapping.py" in mapping_command["command"]
+    assert "Threshold comparison" in agent_response["reply"]
     print("GUI smoke test passed.")
 
 

@@ -25,6 +25,8 @@ The default page is the `Orthogroups.tsv` presence/absence filter. The OrthoFind
 
 The `Known Proteins` tab maps known calcification proteins to orthogroups using the V2 DIAMOND-style workflow from the reference notebook. Plotting sections are not included.
 
+The `Pipeline Copilot` panel on the presence/absence page is the first agent layer. It routes user questions to deterministic pipeline tools, so its answers come from the same backend functions used by the GUI.
+
 ## Presence/Absence Filtering
 
 Default demo inputs:
@@ -65,6 +67,36 @@ results/presence_absence/candidate_orthogroups.tsv
 results/presence_absence/candidate_orthogroups_summary.tsv
 ```
 
+The `Export Report` button also writes:
+
+```text
+results/presence_absence/run_report.md
+results/presence_absence/settings.json
+```
+
+`run_report.md` is a human-readable methods/results summary. `settings.json` records the exact input paths, thresholds, and summary counts for reproducibility.
+
+## Pipeline Copilot
+
+The copilot can currently:
+
+- summarize the loaded dataset
+- compare common threshold settings
+- check metadata against `Orthogroups.tsv`
+- explain why a specific orthogroup passes or fails the current filter
+- draft a short methods summary
+
+Example prompts:
+
+```text
+compare thresholds
+check metadata
+explain OG0000049
+write a methods summary
+```
+
+This first version is intentionally deterministic. It does not call an external LLM yet. The next step is to add an optional LLM backend that can choose among these same pipeline tools while keeping expensive actions approval-gated.
+
 ## Command-Line Filtering
 
 ```powershell
@@ -74,7 +106,8 @@ python scripts/orthogroup_filter.py `
   --direction calcifying `
   --min-target-present 6 `
   --max-background-present 0 `
-  --output-dir results/presence_absence
+  --output-dir results/presence_absence `
+  --report
 ```
 
 ## Known Calcification Protein Mapping

@@ -28,9 +28,11 @@ from scripts.orthofinder_runner import (  # noqa: E402
 from scripts.orthogroup_filter import (  # noqa: E402
     filter_orthogroups,
     summarize,
+    write_run_report,
     write_results,
 )
 from scripts.known_protein_mapping import summarize_inputs as summarize_mapping_inputs  # noqa: E402
+from scripts.pipeline_agent import chat as agent_chat  # noqa: E402
 
 
 DEFAULT_INPUT = PROJECT_ROOT / "examples" / "proteomes"
@@ -932,6 +934,13 @@ class Handler(BaseHTTPRequestHandler):
                     summarize(parsed["orthogroups_path"], parsed["metadata_path"]),
                 )
                 return
+            if path == "/api/agent/chat":
+                message = str(data.get("message", ""))
+                context = data.get("context", {})
+                if not isinstance(context, dict):
+                    context = {}
+                json_response(self, HTTPStatus.OK, agent_chat(message, context))
+                return
             if path == "/api/og/filter":
                 rows, summary, _parsed = og_filter_payload(data)
                 json_response(
@@ -947,6 +956,29 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/og/export":
                 rows, summary, parsed = og_filter_payload(data)
                 paths = write_results(rows, summary, parsed["output_dir"])
+                json_response(
+                    self,
+                    HTTPStatus.OK,
+                    {
+                        "summary": summary,
+                        "rows": rows[:250],
+                        "row_limit": 250,
+                        "paths": paths,
+                    },
+                )
+                return
+            if path == "/api/og/report":
+                rows, summary, parsed = og_filter_payload(data)
+                paths = write_run_report(
+                    rows,
+                    summary,
+                    parsed["output_dir"],
+                    parsed["orthogroups_path"],
+                    parsed["metadata_path"],
+                    str(parsed["direction"]),
+                    int(parsed["min_target_present"]),
+                    int(parsed["max_background_present"]),
+                )
                 json_response(
                     self,
                     HTTPStatus.OK,

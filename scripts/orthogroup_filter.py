@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 
@@ -250,6 +252,18 @@ def filter_orthogroups(
         "background_total": len(background_species),
         "candidate_count": len(results),
         "tier_counts": tier_counts,
+        "target_species": target_species,
+        "background_species": background_species,
+        "calcifying_species": [
+            species_id
+            for species_id in og_data.species_columns
+            if metadata[species_id]["group"] == "calcifying"
+        ],
+        "non_calcifying_species": [
+            species_id
+            for species_id in og_data.species_columns
+            if metadata[species_id]["group"] == "non_calcifying"
+        ],
         "warnings": warnings,
     }
     return results, summary
@@ -297,6 +311,132 @@ def write_results(
     }
 
 
+def write_run_report(
+    results: list[dict[str, object]],
+    summary: dict[str, object],
+    output_dir: Path,
+    orthogroups_path: Path,
+    metadata_path: Path,
+    direction: str,
+    min_target_present: int,
+    max_background_present: int,
+) -> dict[str, str]:
+    paths = write_results(results, summary, output_dir)
+    settings_path = output_dir / "settings.json"
+    report_path = output_dir / "run_report.md"
+
+    settings = {
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "orthogroups_path": str(orthogroups_path),
+        "metadata_path": str(metadata_path),
+        "direction": direction,
+        "min_target_present": min_target_present,
+        "max_background_present": max_background_present,
+        "summary": summary,
+    }
+    with settings_path.open("w", encoding="utf-8") as handle:
+        json.dump(settings, handle, indent=2)
+
+    tier_lines = []
+    for tier, count in sorted(
+        summary.get("tier_counts", {}).items(),
+        key=lambda item: tuple(int(part) for part in str(item[0]).split("/", 1)),
+        reverse=True,
+    ):
+        tier_lines.append(f"- {tier}: {count}")
+    if not tier_lines:
+        tier_lines.append("- No candidate tiers found")
+
+    warning_lines = [
+        f"- {warning}" for warning in summary.get("warnings", [])
+    ] or ["- None"]
+    top_rows = results[:20]
+    top_table = [
+        "| Orthogroup | Target | Background | Specificity | Tier | Members |",
+        "| --- | ---: | ---: | ---: | --- | ---: |",
+    ]
+    for row in top_rows:
+        top_table.append(
+            "| {og} | {target}/{target_total} | {background}/{background_total} | "
+            "{specificity} | {tier} | {members} |".format(
+                og=row["Orthogroup"],
+                target=row["target_present"],
+                target_total=row["target_total"],
+                background=row["background_present"],
+                background_total=row["background_total"],
+                specificity=row["specificity"],
+                tier=row["tier"],
+                members=row["member_count"],
+            )
+        )
+    if not top_rows:
+        top_table.append("| No candidates |  |  |  |  |  |")
+
+    target_species = "\n".join(
+        f"- {species_id}" for species_id in summary.get("target_species", [])
+    ) or "- None"
+    background_species = "\n".join(
+        f"- {species_id}" for species_id in summary.get("background_species", [])
+    ) or "- None"
+
+    report = f"""# Orthogroup Presence/Absence Run Report
+
+Generated: {settings["created_at"]}
+
+## Inputs
+
+- Orthogroups table: `{orthogroups_path}`
+- Species metadata: `{metadata_path}`
+
+## Filter
+
+- Direction: `{direction}`
+- Target group: `{summary["target_group"]}`
+- Background group: `{summary["background_group"]}`
+- Minimum target presence: `{min_target_present}/{summary["target_total"]}`
+- Maximum background presence: `{max_background_present}/{summary["background_total"]}`
+
+## Results
+
+- Orthogroups evaluated: {summary["orthogroup_count"]}
+- Species evaluated: {summary["species_count"]}
+- Candidate orthogroups: {summary["candidate_count"]}
+
+## Tier Breakdown
+
+{chr(10).join(tier_lines)}
+
+## Target Species
+
+{target_species}
+
+## Background Species
+
+{background_species}
+
+## Warnings
+
+{chr(10).join(warning_lines)}
+
+## Top Candidate Orthogroups
+
+{chr(10).join(top_table)}
+
+## Output Files
+
+- Candidate table: `{paths["candidate_table"]}`
+- Summary table: `{paths["summary_table"]}`
+- Settings JSON: `{settings_path}`
+"""
+    report_path.write_text(report, encoding="utf-8")
+
+    return {
+        **paths,
+        "settings_json": str(settings_path),
+        "run_report": str(report_path),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Filter OrthoFinder Orthogroups.tsv by phenotype presence/absence."
@@ -311,6 +451,7 @@ def main() -> None:
     parser.add_argument("--min-target-present", required=True, type=int)
     parser.add_argument("--max-background-present", required=True, type=int)
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--report", action="store_true")
     args = parser.parse_args()
 
     results, summary = filter_orthogroups(
@@ -322,7 +463,19 @@ def main() -> None:
     )
     print(f"Candidate orthogroups: {summary['candidate_count']}")
     if args.output_dir:
-        paths = write_results(results, summary, args.output_dir)
+        if args.report:
+            paths = write_run_report(
+                results,
+                summary,
+                args.output_dir,
+                args.orthogroups,
+                args.metadata,
+                args.direction,
+                args.min_target_present,
+                args.max_background_present,
+            )
+        else:
+            paths = write_results(results, summary, args.output_dir)
         for label, path in paths.items():
             print(f"{label}: {path}")
 

@@ -288,6 +288,59 @@
       grid-column: 1 / -1;
     }
 
+    .copilot-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 12px;
+    }
+
+    .chat-log {
+      height: 260px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .chat-message {
+      max-width: 90%;
+      margin-bottom: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    .chat-message.user {
+      margin-left: auto;
+      background: #e8f4f2;
+      border: 1px solid #b8d9d5;
+    }
+
+    .chat-message.agent {
+      background: #f2f5f8;
+      border: 1px solid var(--line);
+    }
+
+    .chat-input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .quick-actions {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .quick-actions button {
+      width: 100%;
+      text-align: left;
+    }
+
     @media (max-width: 1000px) {
       header {
         align-items: flex-start;
@@ -306,7 +359,8 @@
 
     @media (max-width: 640px) {
       .row,
-      .species-grid {
+      .species-grid,
+      .copilot-layout {
         grid-template-columns: 1fr;
       }
 
@@ -368,6 +422,7 @@
           <button type="button" id="loadBtn">Load</button>
           <button type="submit" class="primary">Apply Filter</button>
           <button type="button" id="exportBtn" class="secondary">Export</button>
+          <button type="button" id="reportBtn" class="secondary">Export Report</button>
         </div>
         <div id="message" class="message">Ready.</div>
       </form>
@@ -416,6 +471,29 @@
       <div class="panel-body">
         <div class="table-wrap" id="resultWrap">
           <div class="empty">No filter run yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="full">
+      <div class="panel-header">Pipeline Copilot</div>
+      <div class="panel-body">
+        <div class="copilot-layout">
+          <div>
+            <div class="chat-log" id="chatLog">
+              <div class="chat-message agent">I can summarize the dataset, compare thresholds, check metadata, explain an orthogroup, or draft a methods summary.</div>
+            </div>
+            <div class="chat-input-row">
+              <input id="agentInput" autocomplete="off" placeholder="Ask about this orthogroup analysis">
+              <button type="button" id="agentSend" class="primary">Ask</button>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <button type="button" data-agent-prompt="summarize dataset">Summarize Dataset</button>
+            <button type="button" data-agent-prompt="compare thresholds">Compare Thresholds</button>
+            <button type="button" data-agent-prompt="check metadata">Check Metadata</button>
+            <button type="button" data-agent-prompt="write a methods summary">Methods Summary</button>
+          </div>
         </div>
       </div>
     </section>
@@ -565,6 +643,57 @@
       } catch (error) {
         setMessage(error.message, "error");
       }
+    });
+
+    document.getElementById("reportBtn").addEventListener("click", async () => {
+      try {
+        const data = await postJson("/api/og/report", lastPayload || payload());
+        renderSummary(data.summary);
+        renderResults(data.rows);
+        setMessage(`Report exported to ${data.paths.run_report}`, "ok");
+      } catch (error) {
+        setMessage(error.message, "error");
+      }
+    });
+
+    function appendChatMessage(text, role) {
+      const node = document.createElement("div");
+      node.className = `chat-message ${role}`;
+      node.textContent = text;
+      document.getElementById("chatLog").appendChild(node);
+      document.getElementById("chatLog").scrollTop = document.getElementById("chatLog").scrollHeight;
+    }
+
+    async function askAgent(prompt) {
+      const text = String(prompt || "").trim();
+      if (!text) return;
+      appendChatMessage(text, "user");
+      try {
+        const data = await postJson("/api/agent/chat", {
+          message: text,
+          context: payload()
+        });
+        appendChatMessage(data.reply || "No response.", "agent");
+      } catch (error) {
+        appendChatMessage(error.message, "agent");
+      }
+    }
+
+    document.getElementById("agentSend").addEventListener("click", () => {
+      const input = document.getElementById("agentInput");
+      askAgent(input.value);
+      input.value = "";
+    });
+
+    document.getElementById("agentInput").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("agentSend").click();
+      }
+    });
+
+    document.querySelectorAll("[data-agent-prompt]").forEach(button => {
+      button.addEventListener("click", () => askAgent(button.dataset.agentPrompt));
     });
   </script>
 </body>
