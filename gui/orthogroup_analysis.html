@@ -414,11 +414,6 @@
           </div>
         </div>
         <div class="actions">
-          <button type="button" data-min-target="7" data-max-background="0">7/7, 0 background</button>
-          <button type="button" data-min-target="6" data-max-background="0">6/7, 0 background</button>
-          <button type="button" data-min-target="4" data-max-background="2">Notebook 4/7, <=2</button>
-        </div>
-        <div class="actions">
           <button type="button" id="loadBtn">Load</button>
           <button type="submit" class="primary">Apply Filter</button>
           <button type="button" id="exportBtn" class="secondary">Export</button>
@@ -612,13 +607,6 @@
       } catch (error) {
         setMessage(error.message, "error");
       }
-    });
-
-    document.querySelectorAll("[data-min-target]").forEach(button => {
-      button.addEventListener("click", () => {
-        document.getElementById("minTarget").value = button.dataset.minTarget;
-        document.getElementById("maxBackground").value = button.dataset.maxBackground;
-      });
     });
 
     filterForm.addEventListener("submit", async event => {
